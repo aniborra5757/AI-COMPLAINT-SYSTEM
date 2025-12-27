@@ -12,7 +12,8 @@ const Dashboard = () => {
     const fetchComplaints = async () => {
         try {
             const { data } = await getComplaints();
-            setComplaints(data);
+            const list = data.complaints || []; // Handle new API structure
+            setComplaints(list);
         } catch (err) {
             console.error('Failed to fetch complaints', err);
         } finally {
@@ -39,7 +40,7 @@ const Dashboard = () => {
         <div className="container">
             <header style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
                 <div>
-                    <h1 className="heading" style={{ margin: 0 }}>AI Complaints</h1>
+                    <h1 className="heading" style={{ margin: 0 }}>My Complaints</h1>
                     <p style={{ color: 'var(--text-muted)' }}>Welcome, {user?.email}</p>
                 </div>
                 <button onClick={logout} className="btn" style={{ background: 'var(--surface)', border: '1px solid var(--border)' }}>
@@ -53,7 +54,7 @@ const Dashboard = () => {
                     style={{ background: activeTab !== 'list' ? 'var(--surface)' : undefined }}
                     onClick={() => setActiveTab('list')}
                 >
-                    My Complaints
+                    My History
                 </button>
                 <button
                     className={`btn ${activeTab === 'new' ? 'btn-primary' : ''}`}
@@ -84,7 +85,11 @@ const Dashboard = () => {
                                     <h3 style={{ margin: 0, fontWeight: 600 }}>{c.category}</h3>
                                     <span className={`badge ${getPriorityColor(c.priority)}`}>{c.priority}</span>
                                 </div>
+                                <div style={{ fontSize: '0.8rem', color: '#6366f1', fontFamily: 'monospace' }}>Ref: {c.trackingCode}</div>
                                 <p style={{ color: 'var(--text-gray)', margin: '0.5rem 0' }}>{c.text}</p>
+                                {c.resolutionNotes && <div style={{ background: 'rgba(16, 185, 129, 0.1)', padding: '0.5rem', borderRadius: '8px', fontSize: '0.9rem', border: '1px solid rgba(16, 185, 129, 0.3)' }}>
+                                    <strong>Resolution:</strong> {c.resolutionNotes}
+                                </div>}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.875rem', color: 'var(--text-muted)', borderTop: '1px solid var(--border)', paddingTop: '0.5rem', marginTop: '0.5rem' }}>
                                     <span>Status: <strong>{c.status}</strong></span>
                                     <span>Dept: {c.department}</span>

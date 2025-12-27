@@ -3,6 +3,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 const connectDB = require('./src/config/db');
 const complaintRoutes = require('./src/routes/complaints');
+const userRoutes = require('./src/routes/users');
 
 dotenv.config();
 
@@ -18,6 +19,7 @@ connectDB();
 
 // Routes
 app.use('/api/complaints', complaintRoutes);
+app.use('/api/users', userRoutes);
 
 app.get('/', (req, res) => {
   res.send('AI Complaint System API is running...');

@@ -31,6 +31,20 @@ const ComplaintSchema = new mongoose.Schema({
         type: String,
         default: 'General',
     },
+    orderId: {
+        type: String,
+    },
+    trackingCode: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    resolutionNotes: {
+        type: String,
+    },
+    resolvedBy: {
+        type: String, // Email or Name of employee
+    },
     metadata: {
         type: Map,
         of: String,

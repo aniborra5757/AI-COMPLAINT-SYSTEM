@@ -8,5 +8,6 @@ router.use(authMiddleware);
 router.post('/', createComplaint);
 router.get('/', getComplaints);
 router.get('/:id', getComplaintById);
+router.patch('/:id', require('../controllers/complaintController').updateComplaintStatus);
 
 module.exports = router;
