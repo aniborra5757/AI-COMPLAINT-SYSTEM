@@ -25,6 +25,10 @@ app.get('/', (req, res) => {
   res.send('AI Complaint System API is running...');
 });
 
+app.get('/api', (req, res) => {
+  res.json({ status: 'API Operational', timestamp: new Date() });
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
