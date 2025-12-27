@@ -1,156 +1,136 @@
 # 🧠 Cortex AI - Intelligent Complaint Management System
 
-![License](https://img.shields.io/badge/License-MIT-blue.svg) 
-![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB?logo=react) 
+![License](https://img.shields.io/badge/License-MIT-blue.svg)
+![React](https://img.shields.io/badge/Frontend-React%2018-61DAFB?logo=react)
 ![Node](https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-339933?logo=node.js)
 ![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb)
 ![AI](https://img.shields.io/badge/AI-Gemini%20Pro-8E75B2?logo=google)
 ![Status](https://img.shields.io/badge/Status-Production%20Ready-success)
 
-> **Next-Gen Customer Support Automation**  
-> Cortex AI revolutionizes complaint tracking by using Google Gemini LLMs to auto-classify, prioritize, and draft solutions for customer issues. Built for speed, security, and scale.
+> **Next-Gen Customer Support Automation**
+> 
+> **Cortex AI** is an enterprise-grade platform that revolutionizes complaint tracking. It leverages **Google Gemini LLM** to automatically classify, prioritize, and draft solutions for customer issues, packaged in a stunning "Enterprise Dark" UI.
 
 ---
 
-## 🌟 Key Features
+## 🔗 Live Demo & Links
 
-### 🤖 **AI-Driven Core**
-- **Smart Triage**: Automatically categorizes tickets (Billing, Technical, etc.) and assigns priority based on sentiment analysis using **Google Gemini Pro**.
-- **Auto-Draft Responses**: Empowers agents with one-click, AI-generated professional responses.
-
-### 🎨 **Enterprise-Grade UI/UX**
-- **"Dark Mode" by Default**: A visually stunning, high-contrast interface inspired by tools like Linear and Vercel.
-- **Role-Based Experience**:
-    - **User Portal**: Distraction-free submission and tracking.
-    - **Agent Workspace**: A "Gmail-style" 3-pane efficient inbox.
-    - **Executive Dashboard**: Real-time analytics, charts, and system health metrics.
-
-### ⚡ **Real-Time Operations**
-- **Instant Notifications**: Automated email alerts via Nodemailer for ticket status updates ("In Progress", "Resolved").
-- **Live Metrics**: Dynamic charts visualizing ticket volume and resolution rates.
+| Component | Status | URL |
+| :--- | :--- | :--- |
+| **Frontend (App)** | 🟢 Live | [**Launch App on Vercel**](https://ai-complaint-system.vercel.app) *(Update to your Vercel URL)* |
+| **Backend (API)** | 🟢 Live | [**API Health Check**](https://ai-complaint-system-rm9f.onrender.com) |
+| **Repository** | 📁 GitHub | [**View Source**](https://github.com/aniborra5757/ai-complaint-system) |
 
 ---
 
-## 🏗️ Architecture & Tech Stack
+## 🌟 Application Modules
 
-The application is built as a **Monorepo** containing both the Client and Server.
+### 1. **User Portal (Client)**
+*   **Zero-Friction Reporting**: Simple, distraction-free form for submitting complaints.
+*   **Live Tracking**: Users can see real-time updates on their ticket status.
+*   **Smart History**: A clean card-view history of all past interactions.
 
-### **Frontend (`/frontend`)**
-- **Framework**: React 18 (Vite) for blazing fast performance.
-- **Styling**: Custom CSS Variables (No external UI libraries bloat).
-- **Animations**: `framer-motion` for smooth, professional transitions.
-- **Visualization**: `recharts` for data analytics.
-- **Routing**: `react-router-dom` with protected role-based routes.
+### 2. **Employee Workspace (Agent)**
+*   **"Outlook-Style" Inbox**: High-efficiency 3-column layout for rapid ticket processing.
+*   **AI Copilot**:
+    *   **Auto-Sentiment**: Instantly see if a user is "Angry", "Neutral", or "Happy".
+    *   **Smart Drafts**: Generate professional email responses with one click.
+*   **Real-Time Status**: Instant visual cues for 'Open', 'In Progress', and 'Resolved' tickets.
 
-### **Backend (`/backend`)**
-- **Runtime**: Node.js & Express.js.
-- **Database**: MongoDB (Mongoose Schema).
-- **Authentication**: Supabase Auth (JWT Verification).
-- **AI Engine**: Google Generative AI SDK (`@google/generative-ai`).
-- **Email**: Nodemailer (SMTP).
-
----
-
-## � Project Structure
-
-```bash
-ai-complaint-system/
-├── frontend/             # React Client
-│   ├── src/
-│   │   ├── components/   # Reusable UI (Sidebar, Forms)
-│   │   ├── pages/        # Portals (Admin, Employee, User)
-│   │   ├── api/          # Axios interceptors & endpoints
-│   │   └── index.css     # Enterprise Design System
-├── backend/              # Node/Express API
-│   ├── src/
-│   │   ├── controllers/  # Business Logic
-│   │   ├── models/       # Mongoose Schemas
-│   │   ├── services/     # AI & Email Services
-│   │   └── middleware/   # Auth & Validation
-├── README.md             # You are here
-└── .gitignore            # Security rules
-```
+### 3. **Executive Dashboard (Admin)**
+*   **Bento-Grid Analytics**: A minimal, data-first dashboard visualizing ticket volume and resolution health.
+*   **Priority Distribution**: Pie charts breaking down Critical vs. Routine issues.
+*   **System Health**: Real-time monitoring of API uptime and AI confidence levels.
 
 ---
 
-## 🚀 Deployment Guide (Go Live!)
+## 🔐 User Management & Access Control
 
-This system is designed to be deployed separately: free hosting works perfectly.
+The system uses a **Hybrid Auth** model:
+1.  **Supabase**: Handles Identity (Login/Sign Up/Passwords).
+2.  **MongoDB**: Handles Roles (Admin/Employee/User).
 
-### **Step 1: Backend Deployment (Render / Railway)**
+### **How to Create Admins & Employees**
+Since typical "Sign Up" only creates standard Users, you must **Pre-Authorize** Admins and Employees using the Seed Script.
 
-1.  **Push to GitHub**: Ensure this code is in your GitHub repo.
-2.  **Create Web Service**: Go to [Render.com](https://render.com) -> New + -> Web Service.
-3.  **Connect Repo**: Select your `ai-complaint-system` repo.
-4.  **Settings**:
-    - **Root Directory**: `backend`
-    - **Build Command**: `npm install`
-    - **Start Command**: `npm start`
-5.  **Environment Variables**: Add these in the Render dashboard:
-    - `MONGO_URI`: Your MongoDB Connection String.
-    - `SUPABASE_URL`: Your Supabase URL.
-    - `SUPABASE_ANON_KEY`: Your Supabase Key.
-    - `GEMINI_KEY`: Your Google AI API Key.
-    - `EMAIL_USER` / `EMAIL_PASS`: Your Gmail credentials.
-6.  **Deploy**: Click Create. Render will give you a URL (e.g., `https://cortex-api.onrender.com`).
+#### **Method A: The "Seed" Script (Recommended)**
+This script tells the database: *"Hey, if **test_admin@demo.com** signs up, make them an **Admin**."*
 
-### **Step 2: Frontend Deployment (Vercel)**
-
-1.  **Import Project**: Go to [Vercel.com](https://vercel.com) -> Add New -> Project.
-2.  **Connect Repo**: Select `ai-complaint-system`.
-3.  **Framework Preset**: Select **Vite**.
-4.  **Root Directory**: Click "Edit" and select `frontend`.
-5.  **Environment Variables**:
-    - `VITE_API_URL`: The URL you got from Render (step 1) + `/api` (e.g., `https://cortex-api.onrender.com/api`).
-    - `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`: Same as backend.
-6.  **Deploy**: Click Deploy. You are live! 🌍
-
----
-
-## 👨‍💻 Local Development Setup
-
-If you want to run this locally on your machine:
-
-1.  **Clone the Repo**
-    ```bash
-    git clone https://github.com/aniborra5757/ai-complaint-system.git
-    cd ai-complaint-system
+1.  Open `backend/seed.js` and edit the credentials if needed:
+    ```javascript
+    // backend/seed.js
+    const users = [
+        { email: 'my_admin@sys.com', role: 'admin' },
+        { email: 'my_agent@sys.com', role: 'employee' }
+    ];
     ```
-
-2.  **Backend**
+2.  Run the seeder:
     ```bash
     cd backend
-    npm install
-    # Setup .env file
-    npm run dev
+    npm run seed
     ```
+3.  **CRITICAL STEP**: Now, go to the Frontend and **Sign Up** using that exact email (`my_admin@sys.com`).
+    *   The system will detect the pre-authorized role and grant Admin access immediately.
 
-3.  **Frontend**
-    ```bash
-    cd frontend(new terminal)
-    npm install
-    # Setup .env file
-    npm run dev
-    ```
+#### **Method B: Manual Entry (MongoDB Atlas)**
+If you cannot run the script, add the user directly to your MongoDB `users` collection:
+```json
+{
+  "email": "executive@company.com",
+  "role": "admin",
+  "supabase_uid": "placeholder_until_signup"
+}
+```
+*Then, perform the standard Sign Up on the frontend.*
+
+---
+
+## 🛠️ Technology Stack
+
+*   **Frontend**: React 18, Vite, Framer Motion, Recharts, Lucide Icons.
+*   **Backend**: Node.js, Express.js, REST API.
+*   **Database**: MongoDB Atlas (Data), Supabase (Auth).
+*   **AI Engine**: Google Generative AI (`gemini-pro`).
+*   **Infrastructure**: Vercel (Frontend), Render (Backend).
+
+---
+
+## 🚀 Deployment Instructions
+
+### **Phase 1: Backend (Render)**
+1.  Fork/Clone this repo.
+2.  Create a **Web Service** on Render connected to the `backend` folder.
+3.  Set **Build Command**: `npm install`
+4.  Set **Start Command**: `npm start`
+5.  Add Env Vars used locally (`MONGO_URI`, `SUPABASE_URL`, `GEMINI_KEY`, etc.).
+
+### **Phase 2: Frontend (Vercel)**
+1.  Import the project to Vercel and select the `frontend` folder.
+2.  Set **Framework Preset**: Vite.
+3.  Add Env Vars:
+    *   `VITE_API_URL`: Your Render URL + `/api` (e.g., `https://my-api.onrender.com/api`)
+    *   `VITE_SUPABASE_URL`: Your Supabase URL.
+    *   `VITE_SUPABASE_ANON_KEY`: Your Supabase Anon Key.
+4.  **Deploy**!
 
 ---
 
 ## 🤝 Contribution
 
-This project is open-source. We welcome contributions to make it even better.
+We welcome contributions! Please fork the repository and submit a Pull Request.
 
-1.  Fork the repository.
-2.  Create your feature branch (`git checkout -b feature/AmazingFeature`).
-3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
-4.  Push to the branch (`git push origin feature/AmazingFeature`).
-5.  Open a Pull Request.
+1.  Fork the Project
+2.  Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3.  Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4.  Push to the Branch (`git push origin feature/AmazingFeature`)
+5.  Open a Pull Request
 
 ---
 
 ## 👑 Credits
 
 **Creator & Lead Architect:**
-**[aniborra5757](https://github.com/aniborra5757)** - *Built with precision, focused on Quality.*
+**[aniborra5757](https://github.com/aniborra5757)** - *Engineering Excellence.*
 
 ---
 
