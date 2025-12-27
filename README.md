@@ -1,100 +1,157 @@
-# Cortex AI Complaint System 🤖✨
+# 🧠 Cortex AI - Intelligent Complaint Management System
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg) ![Node.js](https://img.shields.io/badge/Node.js-v18-green.svg) ![React](https://img.shields.io/badge/React-v18-blue.svg) ![Status](https://img.shields.io/badge/Status-Production%20Ready-success)
+![License](https://img.shields.io/badge/License-MIT-blue.svg) 
+![React](https://img.shields.io/badge/Frontend-React%20%2B%20Vite-61DAFB?logo=react) 
+![Node](https://img.shields.io/badge/Backend-Node.js%20%2B%20Express-339933?logo=node.js)
+![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb)
+![AI](https://img.shields.io/badge/AI-Gemini%20Pro-8E75B2?logo=google)
+![Status](https://img.shields.io/badge/Status-Production%20Ready-success)
 
-A next-generation, **AI-powered Customer Support & Complaint Management System**. 
-Designed for speed, elegance, and enterprise-grade reliability.
-
----
-
-## 🚀 Features
-
-### **🔥 AI-Powered Automation**
-- **Smart Triage**: Google Gemini API analyzes incoming complaints to automatically determine **Category**, **Priority**, and **Department**.
-- **Auto-Suggestions**: AI drafts suggested resolution responses for agents.
-
-### **🎨 Enterprise UI (Dark Mode)**
-- **Professional Dashboard**: Inspired by Linear/Vercel. High contrast, precise typography, and rigid bento-grid layouts.
-- **Role-Based Portals**:
-  - **User**: Clean, distraction-free interface to track history and submit new issues.
-  - **Employee**: "Outlook-style" 3-pane inbox for high-speed ticket processing.
-  - **Admin**: Executive analytics with real-time charts and system health monitoring.
-
-### **⚡ Real-Time Notifications**
-- Instant **Email Alerts** (via Nodemailer) when tickets are marked *In Progress* or *Resolved*.
+> **Next-Gen Customer Support Automation**  
+> Cortex AI revolutionizes complaint tracking by using Google Gemini LLMs to auto-classify, prioritize, and draft solutions for customer issues. Built for speed, security, and scale.
 
 ---
 
-## 🛠️ Technology Stack
+## 🌟 Key Features
 
-- **Frontend**: React (Vite), Framer Motion, Recharts, Lucide Icons.
-- **Backend**: Node.js, Express.js.
-- **Database**: MongoDB (Data), Supabase (Auth).
-- **AI Engine**: Google Gemini Pro.
+### 🤖 **AI-Driven Core**
+- **Smart Triage**: Automatically categorizes tickets (Billing, Technical, etc.) and assigns priority based on sentiment analysis using **Google Gemini Pro**.
+- **Auto-Draft Responses**: Empowers agents with one-click, AI-generated professional responses.
 
----
+### 🎨 **Enterprise-Grade UI/UX**
+- **"Dark Mode" by Default**: A visually stunning, high-contrast interface inspired by tools like Linear and Vercel.
+- **Role-Based Experience**:
+    - **User Portal**: Distraction-free submission and tracking.
+    - **Agent Workspace**: A "Gmail-style" 3-pane efficient inbox.
+    - **Executive Dashboard**: Real-time analytics, charts, and system health metrics.
 
-## 📦 Installation & Setup
-
-### Prerequisites
-- Node.js (v16+)
-- MongoDB Atlas URI
-- Supabase Project (URL & Anon Key)
-- Google Gemini API Key
-- Gmail App Password (for notifications)
-
-### 1. Clone the Repository
-\`\`\`bash
-git clone https://github.com/aniborra5757/ai-complaint-system.git
-cd ai-complaint-system
-\`\`\`
-
-### 2. Backend Setup
-\`\`\`bash
-cd backend
-npm install
-cp .env.example .env
-# Fill in your .env variables (MONGO_URI, SUPABASE_URL, GEMINI_KEY, EMAIL_PASS)
-npm run seed  # (Optional) Seeds initial admin/employee accounts
-npm run dev
-\`\`\`
-
-### 3. Frontend Setup
-\`\`\`bash
-cd frontend
-npm install
-cp .env.example .env
-# Add VITE_API_URL and VITE_SUPABASE_URL
-npm run dev
-\`\`\`
+### ⚡ **Real-Time Operations**
+- **Instant Notifications**: Automated email alerts via Nodemailer for ticket status updates ("In Progress", "Resolved").
+- **Live Metrics**: Dynamic charts visualizing ticket volume and resolution rates.
 
 ---
 
-## ☁️ Deployment Guide
+## 🏗️ Architecture & Tech Stack
 
-### **Frontend (Vercel/Netlify)**
-1.  Push this repo to GitHub.
-2.  Import the project into Vercel.
-3.  Set the **Root Directory** to `frontend`.
-4.  Add Environment Variables (`VITE_API_URL`, `VITE_SUPABASE_URL`, `VITE_SUPABASE_ANON_KEY`) in the Vercel dashboard.
-5.  Deploy! 🚀
+The application is built as a **Monorepo** containing both the Client and Server.
 
-### **Backend (Render/Railway)**
-1.  Create a new Web Service on Render.
-2.  Connect your GitHub repo.
-3.  Set **Root Directory** to `backend`.
-4.  Set **Build Command**: `npm install`
-5.  Set **Start Command**: `npm start`
-6.  Add all backend `.env` variables in the Render dashboard.
-7.  Deploy! (Copy the Render URL and update your Frontend's `VITE_API_URL`).
+### **Frontend (`/frontend`)**
+- **Framework**: React 18 (Vite) for blazing fast performance.
+- **Styling**: Custom CSS Variables (No external UI libraries bloat).
+- **Animations**: `framer-motion` for smooth, professional transitions.
+- **Visualization**: `recharts` for data analytics.
+- **Routing**: `react-router-dom` with protected role-based routes.
+
+### **Backend (`/backend`)**
+- **Runtime**: Node.js & Express.js.
+- **Database**: MongoDB (Mongoose Schema).
+- **Authentication**: Supabase Auth (JWT Verification).
+- **AI Engine**: Google Generative AI SDK (`@google/generative-ai`).
+- **Email**: Nodemailer (SMTP).
+
+---
+
+## � Project Structure
+
+```bash
+ai-complaint-system/
+├── frontend/             # React Client
+│   ├── src/
+│   │   ├── components/   # Reusable UI (Sidebar, Forms)
+│   │   ├── pages/        # Portals (Admin, Employee, User)
+│   │   ├── api/          # Axios interceptors & endpoints
+│   │   └── index.css     # Enterprise Design System
+├── backend/              # Node/Express API
+│   ├── src/
+│   │   ├── controllers/  # Business Logic
+│   │   ├── models/       # Mongoose Schemas
+│   │   ├── services/     # AI & Email Services
+│   │   └── middleware/   # Auth & Validation
+├── README.md             # You are here
+└── .gitignore            # Security rules
+```
+
+---
+
+## 🚀 Deployment Guide (Go Live!)
+
+This system is designed to be deployed separately: free hosting works perfectly.
+
+### **Step 1: Backend Deployment (Render / Railway)**
+
+1.  **Push to GitHub**: Ensure this code is in your GitHub repo.
+2.  **Create Web Service**: Go to [Render.com](https://render.com) -> New + -> Web Service.
+3.  **Connect Repo**: Select your `ai-complaint-system` repo.
+4.  **Settings**:
+    - **Root Directory**: `backend`
+    - **Build Command**: `npm install`
+    - **Start Command**: `npm start`
+5.  **Environment Variables**: Add these in the Render dashboard:
+    - `MONGO_URI`: Your MongoDB Connection String.
+    - `SUPABASE_URL`: Your Supabase URL.
+    - `SUPABASE_ANON_KEY`: Your Supabase Key.
+    - `GEMINI_KEY`: Your Google AI API Key.
+    - `EMAIL_USER` / `EMAIL_PASS`: Your Gmail credentials.
+6.  **Deploy**: Click Create. Render will give you a URL (e.g., `https://cortex-api.onrender.com`).
+
+### **Step 2: Frontend Deployment (Vercel)**
+
+1.  **Import Project**: Go to [Vercel.com](https://vercel.com) -> Add New -> Project.
+2.  **Connect Repo**: Select `ai-complaint-system`.
+3.  **Framework Preset**: Select **Vite**.
+4.  **Root Directory**: Click "Edit" and select `frontend`.
+5.  **Environment Variables**:
+    - `VITE_API_URL`: The URL you got from Render (step 1) + `/api` (e.g., `https://cortex-api.onrender.com/api`).
+    - `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY`: Same as backend.
+6.  **Deploy**: Click Deploy. You are live! 🌍
+
+---
+
+## 👨‍💻 Local Development Setup
+
+If you want to run this locally on your machine:
+
+1.  **Clone the Repo**
+    ```bash
+    git clone https://github.com/aniborra5757/ai-complaint-system.git
+    cd ai-complaint-system
+    ```
+
+2.  **Backend**
+    ```bash
+    cd backend
+    npm install
+    # Setup .env file
+    npm run dev
+    ```
+
+3.  **Frontend**
+    ```bash
+    cd frontend(new terminal)
+    npm install
+    # Setup .env file
+    npm run dev
+    ```
 
 ---
 
 ## 🤝 Contribution
 
-We welcome contributions! Please fork the repository and submit a Pull Request.
+This project is open-source. We welcome contributions to make it even better.
 
-**Current Maintainer & Creator:**
-**[aniborra5757](https://github.com/aniborra5757)** - *Lead Developer & Architect*
+1.  Fork the repository.
+2.  Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3.  Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4.  Push to the branch (`git push origin feature/AmazingFeature`).
+5.  Open a Pull Request.
 
-Built with ❤️ by **aniborra5757**.
+---
+
+## 👑 Credits
+
+**Creator & Lead Architect:**
+**[aniborra5757](https://github.com/aniborra5757)** - *Built with precision, focused on Quality.*
+
+---
+
+**License**: Distributed under the MIT License.
