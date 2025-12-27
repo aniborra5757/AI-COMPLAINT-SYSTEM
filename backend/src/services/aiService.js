@@ -1,11 +1,12 @@
-const OpenAI = require('openai');
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
-// Initialize OpenAI only if key is present
-let openai;
-if (process.env.OPENAI_API_KEY) {
-    openai = new OpenAI({
-        apiKey: process.env.OPENAI_API_KEY,
-    });
+// Initialize Gemini only if key is present
+let genAI;
+let model;
+
+if (process.env.GEMINI_API_KEY) {
+    genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    model = genAI.getGenerativeModel({ model: "gemini-pro" });
 }
 
 // Fallback logic
@@ -29,37 +30,33 @@ const fallbackCategorize = (text) => {
 };
 
 const classifyComplaint = async (text) => {
-    // 1. Try OpenAI/LLM if available
-    if (openai) {
+    // 1. Try Gemini if available
+    if (model) {
         try {
-            const response = await openai.chat.completions.create({
-                model: "gpt-3.5-turbo",
-                messages: [
-                    {
-                        role: "system",
-                        content: "You are an AI assistant that categorizes customer complaints. Analyze the complaint and return a JSON object with fields: 'category', 'priority' (Low, Medium, High, Critical), and 'department'."
-                    },
-                    {
-                        role: "user",
-                        content: text
-                    }
-                ],
-                temperature: 0.3,
-            });
+            const prompt = `
+        You are an AI assistant that categorizes customer complaints. 
+        Analyze the following complaint and return a strictly valid JSON object (no markdown formatting).
+        Fields: 'category', 'priority' (Low, Medium, High, Critical), 'department', and 'summary' (short summary).
+        
+        Complaint: "${text}"
+      `;
 
-            const content = response.choices[0].message.content;
-            // Basic JSON parsing attempt (LLM might return extra text, usually strict JSON with system prompt is better but for this demo:)
+            const result = await model.generateContent(prompt);
+            const response = await result.response;
+            let textResponse = response.text();
+
+            // Clean up markdown code blocks if Gemini sends them
+            textResponse = textResponse.replace(/```json/g, '').replace(/```/g, '').trim();
+
             try {
-                const result = JSON.parse(content);
-                return result;
+                const jsonResult = JSON.parse(textResponse);
+                return jsonResult;
             } catch (jsonError) {
-                console.warn('AI returned non-JSON, using fallback:', content);
-                // If JSON parse fails, fall through to fallback
+                console.warn('Gemini returned non-JSON, using fallback:', textResponse);
             }
 
         } catch (error) {
-            console.error('OpenAI API Error (switching to fallback):', error.message);
-            // Fall through to fallback
+            console.error('Gemini API Error (switching to fallback):', error.message);
         }
     }
 
