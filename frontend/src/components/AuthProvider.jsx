@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
     const [role, setRole] = useState(null);
     const [loading, setLoading] = useState(true);
 
-    const fetchRole = async (session) => {
+    const fetchRole = async (session, retries = 3) => {
         if (!session?.user) {
             setRole(null);
             return;
@@ -18,12 +18,24 @@ export const AuthProvider = ({ children }) => {
         try {
             // Call Sync Endpoint
             const res = await axios.post(`${API_URL}/users/sync`, {}, {
-                headers: { Authorization: `Bearer ${session.access_token}` }
+                headers: { Authorization: `Bearer ${session.access_token}` },
+                timeout: 5000 // 5s timeout
             });
             setRole(res.data.role);
         } catch (err) {
-            console.error("Failed to sync user role", err);
-            setRole('user'); // Fallback
+            console.error(`Sync failed. Retries left: ${retries}`, err);
+
+            if (retries > 0) {
+                // Wait 2 seconds and retry (helps with Render Cold Starts)
+                await new Promise(res => setTimeout(res, 2000));
+                return fetchRole(session, retries - 1);
+            }
+
+            // Only fallback if truly failed after retries
+            // setRole('user'); // DANGEROUS: Don't default to user, keep null? 
+            // Better to default to 'user' for safety but maybe 'null' prevents redirect loop?
+            // User went with 'redirecting within seconds', so let's default to user but only after retrying.
+            setRole('user');
         }
     };
 
