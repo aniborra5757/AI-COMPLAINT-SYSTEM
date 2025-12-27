@@ -8,20 +8,31 @@ dotenv.config();
 const seedUsers = async () => {
     await connectDB();
 
-    // CREDENTIALS TO BE USED:
-    // Admin: admin@sys.com / password123
-    // Employee: emp@sys.com / password123
+    // CREDENTIALS FOR TESTING:
+    // 1. Admin: test_admin@demo.com
+    // 2. Employee: test_employee@demo.com
 
     const users = [
         {
+            email: 'test_admin@demo.com',
+            role: 'admin',
+            supabase_uid: 'pending_admin_test',
+        },
+        {
+            email: 'test_employee@demo.com',
+            role: 'employee',
+            supabase_uid: 'pending_employee_test',
+        },
+        // Manual Request Credentials
+        {
             email: 'admin@sys.com',
             role: 'admin',
-            supabase_uid: 'placeholder_uid_admin', // Will be updated on first login sync
+            supabase_uid: 'pending_manual_admin',
         },
         {
             email: 'emp@sys.com',
             role: 'employee',
-            supabase_uid: 'placeholder_uid_emp', // Will be updated on first login sync
+            supabase_uid: 'pending_manual_emp',
         }
     ];
 
@@ -37,9 +48,9 @@ const seedUsers = async () => {
         }
         console.log('---');
         console.log('NOTE: You must now manually "Sign Up" these users in Supabase (or via the App Frontend TEMPORARILY) if they do not exist in Auth yet.');
-        console.log('Use these credentials:');
-        console.log('1. Admin: admin@sys.com / password123');
-        console.log('2. Employee: emp@sys.com / password123');
+        console.log('Use these credentials (OR create them now via Sign Up):');
+        console.log('1. Admin: test_admin@demo.com');
+        console.log('2. Employee: test_employee@demo.com');
         process.exit();
     } catch (error) {
         console.error(error);

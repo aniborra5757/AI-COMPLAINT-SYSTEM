@@ -16,10 +16,10 @@ function AppRoutes() {
       <Route path="/login" element={!user ? <Login allowSignUp={true} title="User Login" expectedRole="user" /> : <Navigate to="/" />} />
 
       {/* Employee Login - No Sign Up */}
-      <Route path="/employee-login" element={!user ? <Login allowSignUp={false} title="Employee Portal" expectedRole="employee" /> : <Navigate to="/" />} />
+      <Route path="/login/employee" element={!user ? <Login allowSignUp={false} title="Employee Portal" expectedRole="employee" /> : <Navigate to="/" />} />
 
-      {/* Secret Admin Login - No Sign Up */}
-      <Route path="/secret-admin-login" element={!user ? <Login allowSignUp={false} title="Admin Restricted" expectedRole="admin" /> : <Navigate to="/" />} />
+      {/* Admin Login - No Sign Up */}
+      <Route path="/login/admin" element={!user ? <Login allowSignUp={false} title="Admin Restricted" expectedRole="admin" /> : <Navigate to="/" />} />
 
       {/* Role Based Redirector for Root */}
       <Route path="/" element={

@@ -1,8 +1,8 @@
-```javascript
 const Complaint = require('../models/Complaint');
-const User = require('../models/User'); // Import User model
+const User = require('../models/User');
 const { classifyComplaint } = require('../services/aiService');
 const generateTrackingCode = require('../utils/codeGenerator');
+const sendEmail = require('../services/emailService');
 
 // @desc    Create a new complaint
 // @route   POST /api/complaints
@@ -17,19 +17,16 @@ const createComplaint = async (req, res) => {
     }
 
     let classification = {};
-    
+
     // If user chose "Other" or didn't specify category, use AI
     if (!category || category === 'Other') {
-       classification = await classifyComplaint(text);
+      classification = await classifyComplaint(text);
     } else {
-       // Use user provided category, AI for priority only (optional, for now simple priority)
-       // Let's just use AI for priority/dept anyway to ensure consistency, 
-       // OR just default them. Let's run AI but force the Category if user passed specific one.
-       const aiResult = await classifyComplaint(text);
-       classification = {
-         ...aiResult,
-         category: category // Override AI category with User selection
-       };
+      const aiResult = await classifyComplaint(text);
+      classification = {
+        ...aiResult,
+        category: category
+      };
     }
 
     const trackingCode = generateTrackingCode();
@@ -47,6 +44,14 @@ const createComplaint = async (req, res) => {
     });
 
     const savedComplaint = await newComplaint.save();
+
+    // Send Confirmation Email
+    await sendEmail(
+      email,
+      `Complaint Received: #${trackingCode}`,
+      `Your complaint has been received. You can track it using code: ${trackingCode}`
+    );
+
     res.status(201).json(savedComplaint);
   } catch (error) {
     console.error('Error creating complaint:', error);
@@ -59,59 +64,24 @@ const createComplaint = async (req, res) => {
 // @access  Private
 const getComplaints = async (req, res) => {
   try {
-    // Fetch user role from our MongoDB User collection
-    // The Supabase token gives us the UID, which maps to our User collection
     const currentUser = await User.findOne({ supabase_uid: req.user.id });
     const userRole = currentUser ? currentUser.role : 'user';
 
     let filters = {};
-    
+
     if (userRole === 'admin') {
-      // Admin sees all
       filters = {};
     } else if (userRole === 'employee') {
-      // Employee sees all (or filtered by dept if we had that logic)
-      filters = {}; // See all for now
+      filters = {};
     } else {
-      // Regular user sees own
       filters.user_id = req.user.id;
     }
 
     const complaints = await Complaint.find(filters).sort({ createdAt: -1 });
-    res.json({ complaints, role: userRole }); 
+    res.json({ complaints, role: userRole });
   } catch (error) {
     console.error('Error fetching complaints:', error);
     res.status(500).json({ message: 'Server Error' });
-  }
-};
-
-// @desc    Update complaint status (Admin/Employee)
-// @route   PATCH /api/complaints/:id
-// @access  Private
-const updateComplaintStatus = async (req, res) => {
-  try {
-      const currentUser = await User.findOne({ supabase_uid: req.user.id });
-      if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'employee')) {
-          return res.status(403).json({ message: 'Not authorized' });
-      }
-
-      const { status, resolutionNotes } = req.body;
-      const updates = { 
-          status, 
-          resolutionNotes,
-          resolvedBy: currentUser.email 
-      };
-
-      const updatedComplaint = await Complaint.findByIdAndUpdate(
-          req.params.id, 
-          updates, 
-          { new: true }
-      );
-
-      res.json(updatedComplaint);
-  } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server Error' });
   }
 };
 
@@ -126,12 +96,59 @@ const getComplaintById = async (req, res) => {
     const currentUser = await User.findOne({ supabase_uid: req.user.id });
     const userRole = currentUser ? currentUser.role : 'user';
 
-    // Access Check
     if (userRole === 'user' && complaint.user_id !== req.user.id) {
-       return res.status(403).json({ message: 'Not authorized' });
+      return res.status(403).json({ message: 'Not authorized' });
     }
 
     res.json(complaint);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server Error' });
+  }
+};
+
+// @desc    Update complaint status (Admin/Employee)
+// @route   PATCH /api/complaints/:id
+// @access  Private
+const updateComplaintStatus = async (req, res) => {
+  try {
+    const currentUser = await User.findOne({ supabase_uid: req.user.id });
+    if (!currentUser || (currentUser.role !== 'admin' && currentUser.role !== 'employee')) {
+      return res.status(403).json({ message: 'Not authorized' });
+    }
+
+    const { status, resolutionNotes } = req.body;
+    const updates = {
+      status,
+      resolutionNotes,
+      resolvedBy: currentUser.email
+    };
+
+    const updatedComplaint = await Complaint.findByIdAndUpdate(
+      req.params.id,
+      updates,
+      { new: true }
+    );
+
+    // --- EMAIL NOTIFICATION LOGIC (REAL) ---
+    // --- EMAIL NOTIFICATION LOGIC (REAL) ---
+    if (updatedComplaint) {
+      if (status === 'Resolved') {
+        await sendEmail(
+          updatedComplaint.email,
+          `Ticket Resolved: #${updatedComplaint.trackingCode}`,
+          `Hello,\n\nGood news! Your complaint regarding "${updatedComplaint.category}" has been marked as RESOLVED.\n\nResolution Details:\n${resolutionNotes || 'No notes provided.'}\n\nThank you for your patience.`
+        );
+      } else if (status === 'In Progress') {
+        await sendEmail(
+          updatedComplaint.email,
+          `Update: Ticket #${updatedComplaint.trackingCode} is In Progress`,
+          `Hello,\n\nWe wanted to let you know that our team is currently working on your complaint regarding "${updatedComplaint.category}".\n\nWe will update you as soon as we have a resolution.\n\nThank you.`
+        );
+      }
+    }
+
+    res.json(updatedComplaint);
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server Error' });
@@ -144,4 +161,3 @@ module.exports = {
   getComplaintById,
   updateComplaintStatus
 };
-```

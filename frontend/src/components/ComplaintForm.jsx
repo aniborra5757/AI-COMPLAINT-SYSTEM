@@ -1,14 +1,13 @@
 import { useState } from 'react';
 import { createComplaint } from '../api/backend';
-import { useNavigate } from 'react-router-dom';
+import { Sparkles } from 'lucide-react';
 
-const ComplaintForm = () => {
+const ComplaintForm = ({ onSuccess }) => {
     const [text, setText] = useState('');
     const [orderId, setOrderId] = useState('');
     const [category, setCategory] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
-    const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -17,58 +16,67 @@ const ComplaintForm = () => {
 
         try {
             await createComplaint({ text, orderId, category });
-            navigate('/dashboard'); // Explicit redirect
+            setText('');
+            setOrderId('');
+            setCategory('');
+            if (onSuccess) onSuccess();
         } catch (err) {
             console.error(err);
-            setError('Failed to submit complaint. Please try again.');
+            setError('Failed to submit. Please try again.');
         } finally {
             setLoading(false);
         }
     };
 
-    const categories = ['Delivery Issue', 'Billing Issue', 'Product Quality', 'Technical Support', 'Other'];
-
     return (
-        <div className="card">
-            <h2 style={{ fontSize: '1.5rem', marginBottom: '1rem', fontWeight: 'bold' }}>New Complaint</h2>
-            {error && <div style={{ color: 'var(--error)', marginBottom: '1rem' }}>{error}</div>}
+        <div className="panel">
+            <div className="panel-header">
+                <div>
+                    <h2 style={{ fontSize: '1.1rem', fontWeight: 600 }}>New Ticket</h2>
+                    <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>Describe your issue in detail.</p>
+                </div>
+            </div>
 
-            <form onSubmit={handleSubmit}>
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
-                    <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem' }}>Order ID (Optional)</label>
-                        <input className="input" value={orderId} onChange={e => setOrderId(e.target.value)} placeholder="e.g. #123456" />
-                    </div>
-                    <div>
-                        <label style={{ display: 'block', marginBottom: '0.5rem' }}>Category</label>
-                        <select className="input" value={category} onChange={e => setCategory(e.target.value)} required>
-                            <option value="">Select a Category</option>
-                            {categories.map(c => <option key={c} value={c}>{c}</option>)}
+            <div className="panel-body">
+                {error && <div style={{ color: 'var(--danger-text)', background: 'var(--danger-bg)', padding: '0.75rem', borderRadius: '6px', marginBottom: '1rem', fontSize: '0.9rem' }}>{error}</div>}
+
+                <form onSubmit={handleSubmit}>
+                    <div className="form-group">
+                        <label className="label">Category</label>
+                        <select className="select" value={category} onChange={e => setCategory(e.target.value)} required>
+                            <option value="">Select Category...</option>
+                            {['Delivery Issue', 'Billing', 'Account', 'Technical', 'Other'].map(c => <option key={c} value={c}>{c}</option>)}
                         </select>
                     </div>
-                </div>
 
-                <div style={{ marginBottom: '1rem' }}>
-                    <label style={{ display: 'block', marginBottom: '0.5rem' }}>Describe your issue in detail</label>
-                    <textarea
-                        className="input"
-                        rows="5"
-                        value={text}
-                        onChange={(e) => setText(e.target.value)}
-                        placeholder="e.g. My package arrived damaged..."
-                        required
-                        style={{ fontFamily: 'inherit' }}
-                    />
-                </div>
+                    <div className="form-group">
+                        <label className="label">Order ID (Optional)</label>
+                        <input className="input" placeholder="e.g. #ORD-12345" value={orderId} onChange={e => setOrderId(e.target.value)} />
+                    </div>
 
-                <button type="submit" className="btn btn-primary" disabled={loading}>
-                    {loading ? 'Analyzing & Submitting...' : 'Submit Complaint'}
-                </button>
-            </form>
-            <p style={{ marginTop: '1rem', fontSize: '0.875rem', color: 'var(--text-muted)' }}>
-                <span style={{ marginRight: '0.5rem' }}>✨</span>
-                If you select "Other", our AI will automatically categorize it for you.
-            </p>
+                    <div className="form-group">
+                        <label className="label">Description</label>
+                        <textarea
+                            className="textarea"
+                            rows={6}
+                            placeholder="What happened?"
+                            value={text}
+                            onChange={e => setText(e.target.value)}
+                            required
+                        />
+                    </div>
+
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', alignItems: 'center', marginTop: '1.5rem' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.8rem', color: 'var(--primary)', marginRight: 'auto' }}>
+                            <Sparkles size={14} />
+                            <span>AI Auto-Triage Enabled</span>
+                        </div>
+                        <button type="submit" className="btn btn-primary" disabled={loading}>
+                            {loading ? 'Processing...' : 'Submit Ticket'}
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
     );
 };
