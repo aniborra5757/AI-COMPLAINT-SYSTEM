@@ -13,14 +13,13 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
+      <Route path="/login" element={!user ? <Login allowSignUp={true} title="User Login" expectedRole="user" /> : <Navigate to="/" />} />
 
-      {/* Hidden Admin Login: Reuse Login component but maybe show slight indication if needed, 
-          or just rely on the user logging in with an ADMIN email at this route. 
-          Actually user just asked for a URL. If they login at /login with admin credentials, it works.
-          But if they want a separate visible "page", we can route /secret-admin-login to Login too.
-       */}
-      <Route path="/secret-admin-login" element={!user ? <Login isAdminLogin /> : <Navigate to="/" />} />
+      {/* Employee Login - No Sign Up */}
+      <Route path="/employee-login" element={!user ? <Login allowSignUp={false} title="Employee Portal" expectedRole="employee" /> : <Navigate to="/" />} />
+
+      {/* Secret Admin Login - No Sign Up */}
+      <Route path="/secret-admin-login" element={!user ? <Login allowSignUp={false} title="Admin Restricted" expectedRole="admin" /> : <Navigate to="/" />} />
 
       {/* Role Based Redirector for Root */}
       <Route path="/" element={

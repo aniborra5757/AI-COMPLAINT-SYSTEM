@@ -8,30 +8,38 @@ dotenv.config();
 const seedUsers = async () => {
     await connectDB();
 
+    // CREDENTIALS TO BE USED:
+    // Admin: admin@sys.com / password123
+    // Employee: emp@sys.com / password123
+
     const users = [
         {
-            email: 'admin@example.com',
+            email: 'admin@sys.com',
             role: 'admin',
-            supabase_uid: 'pending_admin_login',
+            supabase_uid: 'placeholder_uid_admin', // Will be updated on first login sync
         },
         {
-            email: 'employee@example.com',
+            email: 'emp@sys.com',
             role: 'employee',
-            supabase_uid: 'pending_employee_login',
+            supabase_uid: 'placeholder_uid_emp', // Will be updated on first login sync
         }
     ];
 
     try {
         for (const u of users) {
-            const exists = await User.findOne({ email: u.email });
-            if (!exists) {
-                await User.create(u);
-                console.log(`Created: ${u.email} (${u.role})`);
-            } else {
-                console.log(`Exists: ${u.email}`);
-            }
+            // Upsert based on email
+            await User.findOneAndUpdate(
+                { email: u.email },
+                u,
+                { upsert: true, new: true, setDefaultsOnInsert: true }
+            );
+            console.log(`Seeded Role for: ${u.email} -> ${u.role}`);
         }
-        console.log('Seeding complete. Use these emails to Sign Up in Frontend.');
+        console.log('---');
+        console.log('NOTE: You must now manually "Sign Up" these users in Supabase (or via the App Frontend TEMPORARILY) if they do not exist in Auth yet.');
+        console.log('Use these credentials:');
+        console.log('1. Admin: admin@sys.com / password123');
+        console.log('2. Employee: emp@sys.com / password123');
         process.exit();
     } catch (error) {
         console.error(error);
